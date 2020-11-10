@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">	
+		
+<!-- UserMapper.xml :: SQL를 갖는 MetaData -->
+ 					
+<mapper namespace="UserMapper02"> <!-- mapper가 많으니까 구분하기 위함 -->
+
+	<!-- SELECT 매핑구문(select SQL 등록) : select element -->
+  	
+  	<!-- SQL 쿼리문을 DAO에 직접 안 써줘도 됨! 메타데이터화 한 것! -->
+  	<!-- as 뒤에 있는 건 User의 필드임! OGNL에 의해 setUserId() 해준다 -->
+  	<select 	id="getUserList01" 	resultType="user" parameterType="string">
+		SELECT
+		user_id 		AS userId,
+		user_name 		AS userName,
+		password 		AS password,
+		age 			AS age,
+		grade			AS grade,
+		reg_date 		AS regDate
+		FROM users   		
+		where user_id like #{value}								
+  	</select>
+  	
+  	<!-- SELECT 매핑구문(select SQL 등록) : select element
+		- #{} Notation : 파라미터 전달을 전달하는 MyBatis 대입자로 #{userId} 의미
+			==> PrepareStatement의 ? 에 값을 대입 
+		- #{} Notation : SQL에 값을 직접 삽입하는 문법  -->
+	<!-- 현업에서 안 씀 ! -->
+  	 <select 	id="getUserList02" 	
+  	 			parameterType = "string"
+  	 			resultType="user">
+		SELECT
+		user_id 		AS userId,
+		user_name 		AS userName,
+		password 		AS password,
+		age 			AS age,
+		grade			AS grade,
+		reg_date 		AS regDate
+		FROM users   	
+		where user_id like '%${value}%'									
+  	</select>
+  	
+  	<select 	id="findUser" 	
+  	 			parameterType = "string"
+  	 			resultType="string">
+		SELECT
+		user_name 	
+		FROM users   	
+		where ${value} 							
+  	</select>
+  	
+</mapper>

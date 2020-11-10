@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration
+ 		 PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ 		"http://mybatis.org/dtd/mybatis-3-config.dtd">
+  						
+<!-- mybatis-config.xml ::  MyBatis Framework MetaData -->					
+<configuration>
+
+	<!-- 2. 기타 설정 정보 :: [MyBatis_Home]/mybatis-3.2.1.pdf 참조 -->
+	<settings>
+		 <setting name="callSettersOnNulls" value="false"/>
+	</settings>
+	
+	<!-- 3. FQCN(Full Qualified Class Name) Alias(별칭관리) -->
+	<typeAliases>
+		<typeAlias alias="user" type = "mybatis.service.domain.User"/>
+	</typeAliases>
+	
+	<!-- ## Connection Pool 관리는 Spring Framework 에서 해줌 
+  	<environments default="development">
+    	<environment id="development">
+      	<transactionManager type="JDBC"/>
+      	<dataSource type="POOLED">
+        	<property name="driver"  value="${driver}"/>
+        	<property name="url" value="${url}"/>
+        	<property name="username"  value="${username}"/>
+        	<property name="password" value="${password}"/>
+      	</dataSource>
+    </environment> 
+  </environments> -->
+
+  <!-- SQL Definition :: file include -->
+  <mappers>
+    <mapper resource="sql/UserMapper10.xml"/>
+  </mappers>
+
+</configuration>

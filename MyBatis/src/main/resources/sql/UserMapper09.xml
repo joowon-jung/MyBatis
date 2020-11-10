@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+	<mapper namespace="UserMapper09"> 
+
+	<!-- SELECT 매핑구문에서 사용한 ResultSet 과 바인딩될 비지니스 객체 명시적 정의 -->
+  	<resultMap id="userSelectMap" type="user">
+  		<result property = "userId" column="user_id" jdbcType="VARCHAR"/>
+  		<result property = "userName" column="user_name" jdbcType="VARCHAR"/>
+  		<result property = "password" column="password" jdbcType="VARCHAR"/>
+  		<result property = "age" column="age" jdbcType="INTEGER"/>
+  		<result property = "grade" column="grade" jdbcType="NUMERIC"/>
+  		<result property = "regDate" column="reg_date" jdbcType="DATE"/>
+  	</resultMap>
+
+  	<!-- dynamic SQL :: <foreach> element 는 Collection, Array 이용 반복구문 -->
+  	<select 	id="getUserList01" 	
+  				parameterType="mybatis.service.domain.Search"
+  				resultMap="userSelectMap">
+  		SELECT
+		user_id, user_name, password, age, grade, reg_date
+		FROM users
+		<where>
+			<if test = "userId.size != 0">
+				user_id IN 
+				<foreach item = "value"
+						 collection = "userId"
+						 open = "(" separator = "," close =")">
+				#{value} 
+				</foreach>
+			</if>
+		</where>
+		ORDER BY user_id DESC
+  	</select>
+  	
+  	<!-- dynamic SQL :: <foreach> element 는 Collection, Array 이용 반복구문 -->
+  	 <select 	id="getUserList02" 	
+  	 			parameterType="mybatis.service.domain.Search"
+  	 			resultMap="userSelectMap">
+		SELECT
+		user_id, user_name, password, age, grade, reg_date
+		FROM users
+		<where>
+			<if test = "userName[0] != null">
+				user_name IN
+				<foreach item = "value"
+						 collection = "userName"
+						 open = "(" separator = "," close =")">
+				#{value} 
+				</foreach>
+			</if>
+		</where>
+		ORDER BY user_id DESC
+  	</select>
+  	
+	<!-- dynamic SQL :: <foreach> element 는 Collection, Array 이용 반복구문 
+		 dynamic SQL :: <where> element 는 <trim> elements 로 변경 가능 -->
+	<select 	id="getUserList03" 	
+  	 			parameterType="mybatis.service.domain.Search"
+  	 			resultMap="userSelectMap">
+		SELECT
+		user_id, user_name, password, age, grade, reg_date
+		FROM users
+		<trim prefix = "WHERE">
+			<if test = "userId.size != 0">
+				user_id IN
+				<foreach item = "value"
+						 collection = "userId"
+						 open = "(" separator = "," close =")">
+				#{value} 
+				</foreach>
+			</if>
+		</trim>
+		ORDER BY user_id DESC
+  	</select>
+	
+	<!-- dynamic SQL :: <foreach> element 는 Collection, Array 이용 반복구문 
+		 dynamic SQL :: <where> element 는 <trim> elements 로 변경 가능 -->
+	<select 	id="getUserList04" 	
+  	 			parameterType="mybatis.service.domain.Search" 
+  	 			resultMap="userSelectMap">
+		SELECT
+		user_id, user_name, password, age, grade, reg_date
+		FROM users
+		<trim prefix = "WHERE">
+			<if test = "userName[0] != null">
+				user_name IN
+				<foreach item = "value"
+						 collection = "userName"
+						 open = "(" separator = "," close =")">
+				#{value} 
+				</foreach>
+			</if>
+		</trim>
+		ORDER BY user_id DESC
+  	</select>
+  	
+</mapper>
