@@ -11,6 +11,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/com.springsource.org.apache.commons.pool-1.5.3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mybatis-spring-1.2.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/com.springsource.org.apache.commons.logging-1.1.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/com.springsource.org.junit-4.7.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/spring-framework-4.0.9.RELEASE"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

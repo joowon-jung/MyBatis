@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
+
+		xmlns:context="http://www.springframework.org/schema/context"
+		
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://www.springframework.org/schema/beans 
-								http://www.springframework.org/schema/beans/spring-beans.xsd">
+								http://www.springframework.org/schema/beans/spring-beans.xsd
+								
+							http://www.springframework.org/schema/context
+							http://www.springframework.org/schema/context/spring-context.xsd">
 	
 	<!-- PropertyPlaceholderConfigurer 로 로드된 resource 는 ${ } 로 접근 가능 -->
 	<bean id="propertyConfigurer"
@@ -38,4 +44,20 @@
 	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg ref="sqlSessionFactoryBean"/>
 	</bean>
+	
+	<!-- 여기 패키지에 있는거 Annotation 만들거니까 다 스캔 해라 -->
+	<context:component-scan base-package = "mybatis.service.user.impl"/>
+	
+	<!-- ////////////// 아래의 설정을 Annotation 으로 처리 :: java 코드 확인 -->
+	<!--  MyBatis 사용 DAO 생성 및 SqlSession injection 
+	<bean 	id="userDaoImpl14"
+			class="mybatis.service.user.impl.UserDaoImpl14">
+		<property name="sqlSession" ref="sqlSessionTemplate"/>
+	</bean> -->
+	
+	<!--  userService 생성 및 MyBatis 사용 DAO injection
+	<bean id="userServiceImpl14" class="mybatis.service.user.impl.UserServiceImpl14">
+		<property name="userDao" ref="userDaoImpl14"/>
+	</bean>  -->
+	
 </beans>

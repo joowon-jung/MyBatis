@@ -17,7 +17,9 @@
 	
 	<!-- 2. 기타 설정 정보 :: [MyBatis_Home]/mybatis-3.2.1.pdf 참조 -->
 	<settings>
-		<!-- select 결과 column이 null 인 경우 setter Method 호출 유무 :: 추후 학습 -->
+		<!-- select 결과 column이 null 인 경우 setter Method 호출 유무 :: 
+			false : Null 일 때는 setter method를 호출하지 않아, 필드에서 자동 초기화 되는 값이 됨
+			디폴트가 false 이기 때문에 안 써줘도 됨! -->
 		 <setting name="callSettersOnNulls" value="false"/>
 	</settings>
 	
