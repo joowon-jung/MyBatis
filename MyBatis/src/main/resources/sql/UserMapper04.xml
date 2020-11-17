@@ -6,6 +6,15 @@
 		
 	<!-- UserMapper.xml :: SQL를 갖는 MetaData -->
 	<mapper namespace="UserMapper04"> <!-- mapper가 많으니까 구분하기 위함 -->
+	
+	<!-- 
+	///////////////////////////////////////////////////////
+		- MyBatis 이용한 TABLE 컬럼에 NULL 의 입력은 
+		  SQL MAP 설정 파일에 데이터 타입을 명시함으로 처리!
+		- #{} Notation 의 파라메터 이름 뒤에 java.sql.Types 의 Field로 명시
+		- 일반적으로 컬럼에 NULL 입력 하기 위해 사용
+		  (아래 예의 경우 not null 제약조건인 userId, userName, password 는 불필요
+	 -->
 
 	<!-- INSERT 매핑구문(insert SQL 등록) : insert element -->
   	<insert 	id="addUser01" 	parameterType="user">

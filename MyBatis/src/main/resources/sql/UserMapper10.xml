@@ -78,6 +78,15 @@
 					</foreach>
 					</if>
 				</when>
+				<when test = "searchCondition=='userName'" >
+					<if test = "userName[0] != null">
+					user_name IN
+					<foreach item = "value"		collection = "userName"
+								open = "(" separator = "," close = ")">
+					 #{value}			
+					</foreach>
+					</if>
+				</when>
 			</choose>
 		</where>
 		<include refid = "orderby-userId-desc"/>

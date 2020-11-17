@@ -35,7 +35,22 @@ public class UserServiceImpl14 implements UserService {
 	@Override
 	//==> 회원정보 :: INSERT ( 회원가입 )
 	public int addUser(User user) throws Exception {
-		return userDao.addUser(user);
+		////////////////////////////////////////////////////////
+		////// AOP 를 이용한 Transaction 처리를 위해 수정한 부분 //////
+		//return userDao.addUser(user);
+		// Test 후 아래 주석처리하고 위에 부분 주석 풀어서 원상복귀 하자!
+		////////////////////////////////////////////////////////
+		int result = 0;
+		System.out.println(">>>>>> 1번째 insert ==============");
+		result = userDao.addUser(user);
+		System.out.println(">>>>>> 1번째 insert : " + result);
+		System.out.println(">>>>>> 2번째 insert ==============");
+		result = userDao.addUser(user);
+		System.out.println(">>>>>> 2번째 insert : " + result);
+		System.out.println(">>>>>> 결과는 ???? ==============");
+		
+		return 0;
+		////////////////////////////////////////////////////////
 	}
 
 	@Override

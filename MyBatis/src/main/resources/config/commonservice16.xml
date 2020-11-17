@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+      
+      xmlns:context="http://www.springframework.org/schema/context"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:aop="http://www.springframework.org/schema/aop"
+      xmlns:tx="http://www.springframework.org/schema/tx"
+      xsi:schemaLocation=
+            "http://www.springframework.org/schema/beans 
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd
+            
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx.xsd
+            
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<!-- PropertyPlaceholderConfigurer 로 로드된 resource 는 ${ } 로 접근 가능 -->
+	<bean id="propertyConfigurer"
+		  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:config/jdbc.properties"/>
+	</bean>
+	
+	<!-- 네엣 : DBCP (Apache Commons Database Connection) 사용 
+		코딩을 했다면 매번 뜯어고쳐야 함. 근데 메타데이터를 이용했으니까 어떤 데이터소스를 쓰더라도 쉽게 바꿀수 있음! -->
+	<bean id="dataSource" 
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<property name="initialSize" value="${jdbc.initialSize}"/>
+		<property name="maxActive" value="${jdbc.maxActive}"/>
+	</bean>
+	
+	<!-- SqlSession 인스턴스를 생성하는 SqlSessionFactory 생성
+		- Factory Pattern 적용 :: Spring의 FactoryBean interface 구현 
+		Spring과 mybatis 를 연동해주는 api 이용해서 스프링에서 커넥션 관리 -->
+	<bean 	id="sqlSessionFactoryBean" 
+			class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:sql/mybatis-config13.xml"/>
+	</bean>
+	
+	<!--  SqlSessionTeampate 인스턴스 생성
+			- Spring 과 연동시 사용하는 핵심 SqlSession 구현체
+			- Spring 에서 제공하는 Transaction 처리에 구조화된 SqlSession 구현체 -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactoryBean"/>
+	</bean>
+	
+	<!-- 여기 패키지에 있는거 Annotation 만들거니까 다 스캔 해라 -->
+	<context:component-scan base-package = "mybatis.service.user.impl"/>
+	
+	<!-- AOP 적용 : LOG 를 처리하는 Aspect 선언 -->
+	<!-- 1. 일반 Bean Definition :: POJO 기반 -->
+	<bean id = "pojoAspect"	class = "mybatis.service.PojoAspectJ"/>
+	
+	<!-- 2. 선언적으로 Point cut / Advice 정의
+		 :: TestAspectJ02.java(pointCut+advice 합치기)의 annotation과 아래를 비교 -->
+	<aop:config>
+		<aop:aspect ref="pojoAspect">
+			<aop:around
+				pointcut="execution(* mybatis.service.user..*Impl*.*(..))" method = "invoke" />
+		</aop:aspect>
+	</aop:config>
+	
+	<!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+	<!-- Transaction Test 방법
+		  1. 아래의 Transaction AOP 부분 주석처리후 MyBatisTestApp16Transaction 실행
+		     ==> 무결성 ERROR : 그러나 하나의 데이터는 insert 됨 ( default : autocommit )
+		  2. 아래의 Transaction AOP 부분 원상복귀후 MyBatisTestApp16Transaction 실행
+		     ==> 무결성 ERROR : 데이터는 insert 안됨 (Spring transactionManager 관리됨)
+	 -->
+	 <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+	 <!-- TransactionManager instance 생성 -->
+	 <bean id = "transactionManager"
+	 		class = "org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	 	<property name = "dataSource" ref = "dataSource" />		
+	 </bean>
+	
+	 <!-- Transaction Advice 생성 
+	 		:: method : transaction 적용 Method
+	 		:: propagation : transaction 전파규칙 (default : REQUIRED)
+	 		:: read-only : 트랜잭션이 읽기만 가능 (선택) -->
+	 <tx:advice id="txAdvice" transaction-manager="transactionManager">
+	 	<tx:attributes>
+	 		<tx:method name = "get*" propagation="REQUIRED" read-only="true"/>
+	 		<tx:method name = "add*" />
+	 	</tx:attributes>
+	 </tx:advice>
+	 
+	 <!-- AOP : pointcut / advisor 설정 -->
+	 <aop:config>
+		<aop:pointcut id="requiredTx"
+						expression="execution(* mybatis.service.user..*ServiceImpl*.*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="requiredTx"/>
+	</aop:config>
+	
+</beans>
